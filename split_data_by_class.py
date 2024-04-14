@@ -68,7 +68,8 @@ def main():
     for sign in ['tracks', 'scat', 'bone', 'dead']:
         value = sign.capitalize()
         for x in tqdm(df[df[sign] == value]['image_url'], desc=sign):
-            s = args.source_path
+            if not x:
+                continue
             img_name = f'{Path(x).parent.name}{Path(x).suffix}'
             img_path = f'{args.source_path}/{img_name}'
             if not Path(img_path).exists():
@@ -77,7 +78,7 @@ def main():
             else:
                 shutil.copy2(img_path, f'{args.output_path}/{sign}')
 
-    print('Number of images that were not in source folder:', sum(not_exists))
+    print('Number of images that were not in source folder:', not_exists)
 
 
 if __name__ == '__main__':
