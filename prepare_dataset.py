@@ -2,12 +2,11 @@
 # coding: utf-8
 
 import argparse
-from glob import glob
 import json
 import os
 import random
 import shutil
-import sys
+from glob import glob
 from pathlib import Path
 
 from tqdm import tqdm
@@ -36,6 +35,9 @@ def opts() -> argparse.Namespace:
                         help='The source dir with inat photos',
                         type=str,
                         default='images')
+    parser.add_argument('--init-dataset',
+                        action='store_true',
+                        help='Copy the inat pre-annotated signs dataset')
     return parser.parse_args()
 
 
@@ -104,14 +106,22 @@ def main():
             continue
 
         img_name = Path(image_relative_path).name
+        if Path(f'{proj_name}/{_cls}/{img_name}').exists():
+            continue
         shutil.copy2(image_relative_path, f'{proj_name}/{_cls}/{img_name}')
 
-    const_dataset = glob('dataset_by_classes/*')
+## >>>>>>>>>>>>>>>>>>>> check name of all images, exclude if exist since it's split
 
-    for class_name in tqdm(const_dataset):
-        class_images = glob(f'{class_name}/*')
-        for img_path in tqdm(class_images):
-            shutil.copy2(img_path, f'{proj_name}/{Path(class_name).name}/{Path(img_path).name}')
+    if args.init_dataset:
+        const_dataset = glob('dataset_by_classes/*')
+
+        for class_name in tqdm(const_dataset):
+            class_images = glob(f'{class_name}/*')
+            for img_path in tqdm(class_images):
+                shutil.copy2(
+                    img_path,
+                    f'{proj_name}/{Path(class_name).name}/{Path(img_path).name}'
+                )
 
     train_path = os.path.join(dataset_path, 'train')
     val_path = os.path.join(dataset_path, 'val')
