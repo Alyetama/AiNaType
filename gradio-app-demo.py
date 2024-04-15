@@ -16,7 +16,7 @@ def image_classifier(inp):
             d['live_animal'] = v
         elif k == 2:
             d['scat'] = v
-        elif k == 1:
+        elif k == 3:
             d['tracks'] = v
     return d, d
 
