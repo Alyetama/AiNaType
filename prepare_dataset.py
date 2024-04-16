@@ -35,6 +35,10 @@ def opts() -> argparse.Namespace:
                         help='The source dir with inat photos',
                         type=str,
                         default='images')
+    parser.add_argument('-o',
+                        '--output-dir',
+                        help='The output project dir',
+                        type=str)
     parser.add_argument('--init-dataset',
                         action='store_true',
                         help='Copy the inat pre-annotated signs dataset')
@@ -54,7 +58,7 @@ def main():
     classify_by = 'choice'
 
     data_file = args.data_file_path
-    dataset_path = Path(data_file).stem
+    #dataset_path = Path(data_file).stem
 
     classes = ['scat', 'tracks', 'bone', 'dead', 'live_animal']
 
@@ -85,21 +89,28 @@ def main():
         if x.get('choice') not in ['other', 'exclude', 'not_loading', None]
     ]
 
-    proj_name = Path(data_file).stem
+    proj_name = args.output_dir
 
     for c in classes:
         Path(f'{proj_name}/{c}').mkdir(exist_ok=True, parents=True)
 
+    all_images = glob(f'{proj_name}/**/**/*')
+    all_images = [Path(x).name for x in all_images]
+
     for d in tqdm(data):
-        continue
         if not d.get(classify_by):
             continue
 
         image = d['image']
         image_name = Path(image).parent.name + Path(image).suffix.lower()
+        if image_name in all_images:
+            continue
+
         image_relative_path = f'images/{image_name}'
 
         _cls = d.get(classify_by)
+        if isinstance(_cls, dict):
+            _cls = _cls['choices'][0]
 
         if not Path(image_relative_path).exists():
             print(f'Image does not exist! {image}; {image_relative_path}')
@@ -109,8 +120,6 @@ def main():
         if Path(f'{proj_name}/{_cls}/{img_name}').exists():
             continue
         shutil.copy2(image_relative_path, f'{proj_name}/{_cls}/{img_name}')
-
-## >>>>>>>>>>>>>>>>>>>> check name of all images, exclude if exist since it's split
 
     if args.init_dataset:
         const_dataset = glob('dataset_by_classes/*')
@@ -123,8 +132,8 @@ def main():
                     f'{proj_name}/{Path(class_name).name}/{Path(img_path).name}'
                 )
 
-    train_path = os.path.join(dataset_path, 'train')
-    val_path = os.path.join(dataset_path, 'val')
+    train_path = os.path.join(proj_name, 'train')
+    val_path = os.path.join(proj_name, 'val')
 
     os.makedirs(train_path, exist_ok=True)
     os.makedirs(val_path, exist_ok=True)
@@ -134,7 +143,7 @@ def main():
         os.makedirs(os.path.join(val_path, class_name), exist_ok=True)
 
     for class_name in classes:
-        images = glob(os.path.join(dataset_path, class_name, '*'))
+        images = glob(os.path.join(proj_name, class_name, '*'))
         random.shuffle(images)
         split_index = int(0.8 * len(images))
         train_images = images[:split_index]
@@ -146,7 +155,9 @@ def main():
         for img_path in tqdm(val_images):
             shutil.copy2(img_path, os.path.join(val_path, class_name))
 
-        shutil.rmtree(os.path.join(dataset_path, class_name))
+        shutil.rmtree(os.path.join(proj_name, class_name))
+        Path(f'{proj_name}/train.cache').unlink(missing_ok=True)
+        Path(f'{proj_name}/val.cache').unlink(missing_ok=True)
 
 
 if __name__ == '__main__':
