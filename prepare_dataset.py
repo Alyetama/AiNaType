@@ -60,7 +60,7 @@ def main():
     data_file = args.data_file_path
     #dataset_path = Path(data_file).stem
 
-    classes = ['scat', 'tracks', 'bone', 'dead', 'live_animal']
+    classes = ['scat', 'tracks', 'dead', 'live_animal']
 
     with open(data_file) as j:
         data = json.load(j)
@@ -111,6 +111,9 @@ def main():
         _cls = d.get(classify_by)
         if isinstance(_cls, dict):
             _cls = _cls['choices'][0]
+
+        if _cls == 'bone':
+            _cls = 'dead'
 
         if not Path(image_relative_path).exists():
             print(f'Image does not exist! {image}; {image_relative_path}')
