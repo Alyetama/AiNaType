@@ -10,6 +10,7 @@ def image_classifier(inp):
     p = res[0].probs
     d = {}
     for k, v in zip(p.top5, p.top5conf.cpu().numpy()):
+        v = v.tolist()
         if k == 0:
             d['dead'] = v
         elif k == 1:
@@ -28,7 +29,7 @@ def main():
     demo = gr.Interface(fn=image_classifier,
                         inputs=input_image,
                         outputs=[label, 'json'],
-                        allow_flagging='manual')
+                        allow_flagging='manual', title='AiNaturalisType')
     demo.launch(server_name='0.0.0.0')
 
 
