@@ -97,6 +97,8 @@ def main():
     all_images = glob(f'{proj_name}/**/**/*')
     all_images = [Path(x).name for x in all_images]
 
+    n_images = 0
+
     for d in tqdm(data):
         if not d.get(classify_by):
             continue
@@ -105,6 +107,7 @@ def main():
         image_name = Path(image).parent.name + Path(image).suffix.lower()
         if image_name in all_images:
             continue
+        n_images += 1
 
         image_relative_path = f'images/{image_name}'
 
@@ -134,6 +137,8 @@ def main():
                     img_path,
                     f'{proj_name}/{Path(class_name).name}/{Path(img_path).name}'
                 )
+
+    print('Number of new images:', n_images)
 
     train_path = os.path.join(proj_name, 'train')
     val_path = os.path.join(proj_name, 'val')
