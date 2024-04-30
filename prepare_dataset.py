@@ -85,8 +85,8 @@ def main():
         data.append(task)
 
     data = [
-        x for x in data
-        if x.get('choice') not in ['other', 'exclude', 'not_loading', None]
+        x for x in data if x.get('choice') not in
+        ['exclude', 'not_loading', 'low_conf', 'tmp', None]
     ]
 
     proj_name = args.output_dir
