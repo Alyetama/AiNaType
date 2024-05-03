@@ -60,7 +60,7 @@ def main():
     data_file = args.data_file_path
     #dataset_path = Path(data_file).stem
 
-    classes = ['scat', 'tracks', 'dead', 'live_animal']
+    classes = ['scat', 'tracks', 'dead', 'live_animal', 'other']
 
     with open(data_file) as j:
         data = json.load(j)
