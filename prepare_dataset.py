@@ -9,6 +9,7 @@ import shutil
 from glob import glob
 from pathlib import Path
 
+import requests
 from tqdm import tqdm
 
 
@@ -43,6 +44,16 @@ def opts() -> argparse.Namespace:
                         action='store_true',
                         help='Copy the inat pre-annotated signs dataset')
     return parser.parse_args()
+
+
+def download(url: str, output_path: str):
+    r = requests.get(url)
+    if r.status_code == 200:
+        with open(output_path, 'wb') as f:
+            f.write(r.content)
+        return True
+    else:
+        return False
 
 
 def main():
@@ -119,13 +130,17 @@ def main():
             _cls = 'dead'
 
         if not Path(image_relative_path).exists():
-            print(f'Image does not exist! {image}; {image_relative_path}')
+            downloaded = download(image, image_relative_path)
+            print('Attempting to download: ', image)
+            if not downloaded:
+                print(f'Could not download {image}!')
+                continue
+
+        #img_name = Path(image_relative_path).name
+        if Path(f'{proj_name}/{_cls}/{image_name}').exists():
             continue
 
-        img_name = Path(image_relative_path).name
-        if Path(f'{proj_name}/{_cls}/{img_name}').exists():
-            continue
-        shutil.copy2(image_relative_path, f'{proj_name}/{_cls}/{img_name}')
+        shutil.copy2(image_relative_path, f'{proj_name}/{_cls}/{image_name}')
 
     if args.init_dataset:
         const_dataset = glob('dataset_by_classes/*')
