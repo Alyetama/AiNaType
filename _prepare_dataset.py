@@ -60,7 +60,7 @@ def main():
     data_file = args.data_file_path
     #dataset_path = Path(data_file).stem
 
-    classes = ['scat', 'tracks', 'dead', 'live_animal', 'other']
+    classes = ['tracks', 'other']
 
     with open(data_file) as j:
         data = json.load(j)
@@ -86,7 +86,7 @@ def main():
 
     data = [
         x for x in data if x.get('choice') not in
-        ['exclude', 'not_loading', 'low_conf', 'tmp', None]
+        ['exclude', 'not_loading', 'low_conf', 'tmp', None, 'live_animal', 'scat', 'dead', 'bone']
     ]
 
     proj_name = args.output_dir
@@ -115,8 +115,8 @@ def main():
         if isinstance(_cls, dict):
             _cls = _cls['choices'][0]
 
-        if _cls == 'bone':
-            _cls = 'dead'
+        if _cls in ['bone', 'dead', 'live_animal', 'scat']:
+            continue
 
         if not Path(image_relative_path).exists():
             print(f'Image does not exist! {image}; {image_relative_path}')
