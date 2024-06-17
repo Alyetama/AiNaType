@@ -144,6 +144,7 @@ def main():
 
     if args.init_dataset:
         const_dataset = glob('dataset_by_classes/*')
+        #const_dataset = [x for x in const_dataset if Path(x).is_file()]
 
         for class_name in tqdm(const_dataset):
             class_images = glob(f'{class_name}/*')
