@@ -203,4 +203,5 @@ project-5_original/
 resize.py
 tracks_check/
 work_dir/
+*.db-journal
 
