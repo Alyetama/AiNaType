@@ -55,6 +55,8 @@ def run(db_path: str, model_path: str, images_dir: str) -> None:
 
     existing_images = set(row[0] for row in cursor.execute(
         f'SELECT image FROM {table_prefix}_detections'))
+    existing_errored_images = set(row[0] for row in cursor.execute(
+        f'SELECT image FROM {table_prefix}_errored'))
     imgs = [x for x in imgs if Path(x).name not in existing_images]
     len_2 = len(imgs)
 
@@ -80,7 +82,8 @@ def run(db_path: str, model_path: str, images_dir: str) -> None:
 
         except Exception as e:
             logger.error(e)
-            cursor.execute(f'INSERT INTO {table_prefix}_errored VALUES (?)',
+            if Path(img).name not in existing_errored_images:
+                cursor.execute(f'INSERT INTO {table_prefix}_errored VALUES (?)',
                            (Path(img).name, ))
 
     conn.commit()
