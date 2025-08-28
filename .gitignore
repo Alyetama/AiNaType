@@ -209,3 +209,4 @@ archived/
 photos.parquet.tzst
 huggingface/
 clear_jupyter_output.sh
+notebooks

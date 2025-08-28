@@ -9,8 +9,6 @@ AiNaType is an open-source Python project for automated image classification, pr
 - **Gradio Demo App**: User-friendly web app for interactive image uploads and quick predictions.
 - **Annotation Utilities**: Scripts for exporting and processing annotation tasks with Label Studio integration.
 - **Batch Prediction**: SQLite-based tracking of image predictions for bulk processing.
-- **Jupyter Notebooks**: Data preparation and analysis notebooks for tasks and merging prediction results.
-- **Flexible Configuration**: Command-line options for specifying model weights, versions, host, and port.
 
 ## Model Weights
 
