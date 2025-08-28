@@ -208,3 +208,4 @@ project-5-latest*
 archived/
 photos.parquet.tzst
 huggingface/
+clear_jupyter_output.sh

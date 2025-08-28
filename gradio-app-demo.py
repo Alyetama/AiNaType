@@ -6,33 +6,42 @@ from ultralytics import YOLO
 
 
 def image_classifier(inp):
+    label_map = {
+        0: 'dead',
+        1: 'live_animal',
+        2: 'other',
+        3: 'scat',
+        4: 'tracks'
+    }
+
     res = model(inp)
-    p = res[0].probs
-    d = {}
-    for k, v in zip(p.top5, p.top5conf.cpu().numpy()):
-        v = v.tolist()
-        if k == 0:
-            d['dead'] = v
-        elif k == 1:
-            d['live_animal'] = v
-        elif k == 2:
-            d['scat'] = v
-        elif k == 3:
-            d['tracks'] = v
+    probs = res[0].probs
+    confidences = probs.top5conf.cpu().numpy().tolist()
+
+    d = {label_map[k]: v for k, v in zip(probs.top5, confidences)}
     return d, d
 
 
 def main():
-    label = gr.Label(num_top_classes=4)
+    label = gr.Label(num_top_classes=5)
     input_image = gr.Image(sources=['upload'])
+    examples = [
+        "https://biodiv.app/ainaturalistype/examples/dead.png",
+        "https://biodiv.app/ainaturalistype/examples/live_animal.png",
+        "https://biodiv.app/ainaturalistype/examples/other.png",
+        "https://biodiv.app/ainaturalistype/examples/scat.png",
+        "https://biodiv.app/ainaturalistype/examples/tracks.png"
+    ]
 
     demo = gr.Interface(fn=image_classifier,
                         inputs=input_image,
                         outputs=[label, 'json'],
-                        allow_flagging='manual', title='AiNaturalisType')
-    demo.launch(server_name='0.0.0.0')
+                        allow_flagging='manual',
+                        title='AiNaturalisType',
+                        examples=examples)
+    demo.launch()
 
 
 if __name__ == '__main__':
-    model = YOLO('../yolov8/AiNaturalisType/ainatype-c4edQ/weights/best.pt')
+    model = YOLO('AiNaType-v8x.pt')
     main()
