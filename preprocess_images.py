@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import argparse
 import hashlib
 import os
-import sys
 
 import cv2
 from PIL import Image
@@ -70,7 +70,7 @@ def find_and_remove_duplicate_images(base_dir):
             if file.lower().endswith(('.jpg', '.jpeg', '.png')):
                 file_paths.append(os.path.join(root, file))
 
-    for file_path in tqdm(file_paths, desc="Checking for duplicates"):
+    for file_path in tqdm(file_paths, desc='Checking for duplicates'):
         try:
             image_hash = calculate_hash(file_path)
             if image_hash in image_hashes:
@@ -85,7 +85,15 @@ def find_and_remove_duplicate_images(base_dir):
 
 
 def main():
-    directory_path = sys.argv[1]
+    parser = argparse.ArgumentParser(
+        description='Preprocess images in a directory.')
+    parser.add_argument('-d',
+                        '--directory',
+                        required=True,
+                        help='Path to the directory containing images.')
+    args = parser.parse_args()
+
+    directory_path = args.directory
     process_images(directory_path)
     resize_images(directory_path)
     duplicates = find_and_remove_duplicate_images(directory_path)

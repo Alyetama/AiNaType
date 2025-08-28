@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import argparse
 import json
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -55,13 +56,28 @@ def process_chunk(urls, download_folder):
 
 
 if __name__ == "__main__":
-    logger.add('ainaturalistype.log')
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-d",
+        "--data",
+        type=str,
+        required=True,
+        help=
+        "Path to the data parquet file (e.g., data_filtered_by_license.parquet)"
+    )
+    parser.add_argument("-f",
+                        "--download_folder",
+                        type=str,
+                        default="images",
+                        help="Folder to save downloaded images")
+    args = parser.parse_args()
+    logger.add('download_images.log')
 
-    df = pd.read_parquet('data_filtered_by_license.parquet')
+    df = pd.read_parquet(args.data)
     df = df.dropna(subset=['image_url'])
     obsv_urls = list(zip(df['photo_id'], df['image_url']))
 
-    download_folder = "images"
+    download_folder = args.download_folder
     Path(download_folder).mkdir(exist_ok=True)
 
     chunk_size = 100
