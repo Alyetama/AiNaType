@@ -205,3 +205,6 @@ tracks_check/
 work_dir/
 *.db-journal
 project-5-latest*
+archived/
+photos.parquet.tzst
+huggingface/

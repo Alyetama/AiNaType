@@ -33,8 +33,10 @@ def opts() -> argparse.Namespace:
 
 
 def run(db_path: str, model_path: str, images_dir: str) -> None:
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, timeout=30)
     cursor = conn.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL;")
+    conn.commit()
 
     table_prefix = 'ainatype'
 
