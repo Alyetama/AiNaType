@@ -69,7 +69,7 @@ python predict.py -d <db_path> -m <model_path> -i <images_dir>
 Export annotations from Label Studio via shell script:
 
 ```bash
-bash export_annotations.sh
+bash misc/export_annotations.sh
 ```
 
 ## Project Structure
@@ -77,9 +77,7 @@ bash export_annotations.sh
 - `api-ainatype.py`: FastAPI server implementation.
 - `gradio-app-demo.py`: Gradio demo web app.
 - `predict.py`: Batch prediction script with SQLite tracking.
-- `get_annotations.py`: Python script to fetch and save annotations.
-- `export_annotations.sh`: Shell script for annotation export.
-- `assert_const_classes.ipynb`, `create_tasks_csv.ipynb`, `merge-preds.ipynb`: Data processing notebooks.
+- `misc/get_annotations.py`: Python script to fetch and save annotations.
 
 ## License
 
